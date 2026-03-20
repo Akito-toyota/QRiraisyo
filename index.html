@@ -17,6 +17,7 @@ body {
   padding: 20px;
 }
 
+/* 見出し */
 h2 {
   color: #333;
   margin-bottom: 15px;
@@ -29,18 +30,17 @@ h2 {
   align-items: flex-start;
 }
 
-/* 左側 */
+/* 左側（操作系） */
 .left {
   width: 360px;
-  position: relative;
 }
 
-/* 右側 */
+/* 右側（リスト） */
 .right {
   flex: 1;
 }
 
-/* ファイル選択 */
+/* ファイル選択（大きく） */
 .file-input {
   width: 100%;
   font-size: 18px;
@@ -49,28 +49,10 @@ h2 {
   border: 1px solid #ccc;
   background: white;
   cursor: pointer;
-  margin-bottom: 10px;
-}
-
-/* リセットボタン（丸アイコン） */
-.reset-btn {
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  border: none;
-  background: #4f6df5;
-  color: white;
-  font-size: 24px;
-  cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
   margin-bottom: 15px;
 }
 
-.reset-btn:hover {
-  background: #3d57d8;
-}
-
-/* QRリーダー */
+/* QRリーダー（少し小さく） */
 #reader {
   width: 280px;
   padding: 8px;
@@ -80,11 +62,13 @@ h2 {
   margin-bottom: 10px;
 }
 
-/* 表示系 */
+/* 読み取り表示 */
 #qrText {
   font-weight: 600;
+  color: #333;
 }
 
+/* メッセージ */
 #message {
   margin-top: 10px;
   font-size: 18px;
@@ -105,6 +89,7 @@ table {
 th {
   background: #4f6df5;
   color: white;
+  font-weight: 600;
   padding: 10px;
 }
 
@@ -139,9 +124,6 @@ tr:last-child td {
   <div class="left">
     <input type="file" id="excelFile" class="file-input" accept=".xlsx,.xlsm">
 
-    <!-- リセットボタン -->
-    <button class="reset-btn" id="resetBtn" title="リセット">↻</button>
-
     <div id="reader"></div>
 
     <p>読み取ったQR：<span id="qrText">未読込</span></p>
@@ -166,7 +148,6 @@ tr:last-child td {
 
 <script>
 let rows = [];
-let originalRows = [];
 let scanned = new Set();
 
 const tbody = document.getElementById("list");
@@ -185,10 +166,9 @@ document.getElementById("excelFile").addEventListener("change", e => {
       .filter(r => r[0] && r[1])
       .map(r => ({ a: r[0], b: r[1], done: false }));
 
-    originalRows = JSON.parse(JSON.stringify(rows));
     scanned.clear();
-    qrTextEl.textContent = "未読込";
     messageEl.textContent = "";
+    qrTextEl.textContent = "未読込";
     render();
   };
   reader.readAsArrayBuffer(e.target.files[0]);
@@ -213,16 +193,6 @@ function render() {
     messageEl.style.color = "green";
   }
 }
-
-/* リセット処理 */
-document.getElementById("resetBtn").addEventListener("click", () => {
-  rows = JSON.parse(JSON.stringify(originalRows));
-  scanned.clear();
-  qrTextEl.textContent = "未読込";
-  messageEl.textContent = "";
-  messageEl.style.color = "";
-  render();
-});
 
 /* QR読み取り */
 const qr = new Html5Qrcode("reader");
